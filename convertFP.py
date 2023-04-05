@@ -1,6 +1,7 @@
 import json
 import re
-from eval_utils import compile_fp
+
+# update April 05: output seb-questions without given answer in the
 
 def reformat_json_data(data):
     # this only takes on
@@ -8,6 +9,7 @@ def reformat_json_data(data):
     program = data["program"]
     answer = data["answer"]
     context = data["context"]
+    #fact = data["fact_transform"]
 
     # Extract answer value and unit
     answer_value, answer_unit = parse_answer_unit(answer)
@@ -25,7 +27,6 @@ def reformat_json_data(data):
         "ID": "Q0",
         "question": question,
         "program": processed_program, # list of sub-questions
-        "compiled program": compile_fp(context, program),
         "answer": answer_value,
         "unit": answer_unit,
         "context": context_dict
@@ -65,8 +66,9 @@ def process_program(program_str, context_dict):
         question_dict = {
             "ID": question_id,
             "question":question_text.strip(),
-            "answer": get_answer_value(answer_dict, question_id),
-            "unit": get_answer_unit(answer_dict, question_id),
+            "program": "", # empty program, unless the answer needs to be derived
+            "answer": "", # get_answer_value(answer_dict, question_id),
+            "unit": "", # get_answer_unit(answer_dict, question_id),
             "context": get_context_by_index(question_id, context_dict)
         }
         question_list.append(question_dict)
@@ -79,7 +81,11 @@ def process_program(program_str, context_dict):
     return question_list
 
 def get_context_by_index(question_id, context_dict):
-    id = question_id[1:] # question id starts with Qi, e.g. Q2
+    index = question_id[1:]  # Remove the first character (Q) to get the index
+    context_key = f'F{index}'  # Create a context key using the index, e.g., F2
+    
+    return context_dict.get(context_key, None)  # Return the context value or None if not found
+
 
     # find the context statement Fi, e.g. F2, if Fi exist, else return ""
 
@@ -103,7 +109,7 @@ def get_answer_unit(answer_dict, question_id):
 if __name__ == '__main__':
     
     # Opening JSON file
-    f = open('./realFP/train_realfp.json')
+    f = open('./data/realFP/test_realfp.json')
     
     # returns JSON object as a dictionary
     FP_data = json.load(f)
@@ -134,6 +140,6 @@ if __name__ == '__main__':
     formated_data_json = json.dumps(formated_data, indent=2)
     print(formated_data_json)
 
-    with open('output.json', 'w', encoding='utf-8') as output:
+    with open('output_test_realfp.json', 'w', encoding='utf-8') as output:
         json.dump(formated_data, output, ensure_ascii=False, indent=4)
         output.close()
