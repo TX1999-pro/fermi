@@ -8,6 +8,11 @@ from copy import deepcopy
 ureg = pint.UnitRegistry(system='mks', autoconvert_offset_to_baseunit=True)
 ureg.load_definitions('./units.txt')
 
+# test
+p = "PROGRAM:=Q1: How long does it take to pluck a single strand of hair?=Q2: How many hairs do we have on our body?=A1: 5 s=A2: 5e+6=Q2 -> A2 | F2=Q1 -> A1 | F1=P: Mul (Q1, Q2)"
+context = "CONTEXT:=F1: It takes around 5 seconds to pluck a single strand of hair.=F2: The entire human body has 5e+6 hair follicles."    
+
+# utility
 def compile_fp(context, p):
     var = {
         'num_fact_score': []
@@ -97,23 +102,25 @@ def compile_fp(context, p):
     # pprint(var)
     return var
 
-def parse_program(cur):
-    if cur[0] == 'answer':
-        cur = cur[1]
-    if len(cur) == 1:
-        cur = cur[0]
-    if type(cur) == str and cur.isdigit():
-        return float(cur)
-    if cur[0] == '':
-        return float(cur[1][0])
-    elif cur[0] == '.':
-        return kb[kb.name == cur[1][0]][cur[1][1]].values[0]
-    elif cur[0] in MATH_OPS:
-        cur_left = parse_program(cur[1][0])
-        cur_right = parse_program(cur[1][1])
-        if cur[0] == '/' and cur_right == 0:
-            return np.inf
-        return MATH_OPS[cur[0]](cur_left, cur_right)
+print(compile_fp(context,p))
+
+# def parse_program(cur):
+#     if cur[0] == 'answer':
+#         cur = cur[1]
+#     if len(cur) == 1:
+#         cur = cur[0]
+#     if type(cur) == str and cur.isdigit():
+#         return float(cur)
+#     if cur[0] == '':
+#         return float(cur[1][0])
+#     elif cur[0] == '.':
+#         return kb[kb.name == cur[1][0]][cur[1][1]].values[0]
+#     elif cur[0] in MATH_OPS:
+#         cur_left = parse_program(cur[1][0])
+#         cur_right = parse_program(cur[1][1])
+#         if cur[0] == '/' and cur_right == 0:
+#             return np.inf
+#         return MATH_OPS[cur[0]](cur_left, cur_right)
 
 def accuracy_metric(y, y_hat):
     if type(y) not in [int, float, np.float64] or type(y_hat) not in [int, float, np.float64]:
@@ -133,20 +140,20 @@ def accuracy_metric(y, y_hat):
     except:
         return 0
 
-def convert_units(answer):
-    if type(answer) == str:
-        original_pint = ureg(answer)
-    else:
-        original_pint = answer
-    if original_pint is None:
-        return None, None
-    if type(original_pint) not in [float, int]:
-        original_unit = original_pint.units
-        try:
-            converted_pint = original_pint.to_base_units()
-        except:
-            converted_pint = deepcopy(original_pint)
-        standard_unit = converted_pint.units
-        return converted_pint.magnitude, converted_pint.units
-    else:
-        return original_pint, None
+# def convert_units(answer):
+#     if type(answer) == str:
+#         original_pint = ureg(answer)
+#     else:
+#         original_pint = answer
+#     if original_pint is None:
+#         return None, None
+#     if type(original_pint) not in [float, int]:
+#         original_unit = original_pint.units
+#         try:
+#             converted_pint = original_pint.to_base_units()
+#         except:
+#             converted_pint = deepcopy(original_pint)
+#         standard_unit = converted_pint.units
+#         return converted_pint.magnitude, converted_pint.units
+#     else:
+#         return original_pint, None
