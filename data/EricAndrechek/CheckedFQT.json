@@ -112,17 +112,17 @@
     {
         "question": "Archimedes famously placed an upper bound on the number of grains of sand needed to fill the entire universe: One vigintillion. How many grains of sand did he suggest?",
         "answer": "63",
-        "unit": "1"
+        "unit": "grains of sand"
     },
     {
         "question": "How many different types of proteins are in the human body?",
         "answer": "5",
-        "unit": "1"
+        "unit": "types of proteins"
     },
     {
         "question": "How many different amino acids are?",
         "answer": "1",
-        "unit": "1"
+        "unit": "amino acids"
     },
     {
         "question": "How many hairs are on the average human head?",
